@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ncftools"
+version = "0.1.0"
+authors = [
+    { name = "aaronchh", email = "aaronhsu219@gmail.com" },
+]
+description = "A collection of tools for working with NetCDF files"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+dependencies = [
+    "numpy>=1.20.0",
+    "netCDF4>=1.6.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/AaronOET/ncftools"
+
+[project.scripts]
+ncftools-info = "ncftools.describe:main"
+ncftools = "ncftools.cli:main"
+meshinfo = "ncftools.meshinfo:main"
