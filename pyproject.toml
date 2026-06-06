@@ -10,7 +10,7 @@ authors = [
 ]
 description = "A collection of tools for working with NetCDF files"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.8"
 dependencies = [
     "numpy>=1.20.0",
@@ -18,9 +18,11 @@ dependencies = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+
+[tool.setuptools.packages.find]
+include = ["ncftools*"]
 
 [project.urls]
 Homepage = "https://github.com/AaronOET/ncftools"
