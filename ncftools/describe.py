@@ -18,6 +18,18 @@ TOOL_DESCRIPTIONS = {
             meshinfo -i FlowFM_net.nc    # Display mesh info for a given file
             meshinfo -i grid.nc          # Any FlowFM mesh NetCDF file
     """,
+    'nc2shp': """
+        Convert a NetCDF mesh file to ESRI Shapefiles.
+
+        Reads a UGRID-compliant NetCDF mesh file and writes two shapefiles:
+          {stem}_faces.shp      one polygon per mesh face
+          {stem}_dissolved.shp  single dissolved polygon of the entire mesh
+
+        Examples:
+            nc2shp -i FlowFM_net.nc
+            nc2shp -i mesh.nc -o output --crs EPSG:4326
+            nc2shp -i mesh.nc -q
+    """,
 }
 
 
