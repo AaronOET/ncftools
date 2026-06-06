@@ -31,7 +31,15 @@ def build_transition_zone(faces_shp, output_dir="SHP_TRANS", quiet=False):
 
     gdf = gpd.read_file(faces_shp)
 
-    triangles = gdf[gdf["type"] == "triangle"].copy()
+    if "type" in gdf.columns:
+        triangles = gdf[gdf["type"] == "triangle"].copy()
+    else:
+        # Detect triangles by vertex count (closed ring has 4 coords for 3 unique vertices)
+        is_triangle = gdf.geometry.apply(
+            lambda g: len(g.exterior.coords) == 4
+        )
+        triangles = gdf[is_triangle].copy()
+
     if triangles.empty:
         raise RuntimeError("No triangle faces found in attribute table.")
 

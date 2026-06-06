@@ -23,7 +23,11 @@
       "Bash(Select-Object Name, Mode)",
       "Bash(pip install *)",
       "Bash(transzone1 --help)",
-      "Bash(transzone2 --help)"
+      "Bash(transzone2 --help)",
+      "Bash(python -c \"import geopandas as gpd; gdf = gpd.read_file\\('SHP_NC/001_net_faces.shp'\\); print\\('Columns:', list\\(gdf.columns\\)\\); print\\('dtypes:\\\\n', gdf.dtypes\\); print\\('\\\\nFirst rows:\\\\n', gdf.head\\(\\)\\)\")",
+      "Bash(python -c \"import geopandas as gpd; gdf = gpd.read_file\\('d:/GITHUB_OET/ncftools/SHP_NC/001_net_faces.shp'\\); print\\('Columns:', list\\(gdf.columns\\)\\); print\\('dtypes:\\\\n', gdf.dtypes\\); print\\('\\\\nFirst rows:\\\\n', gdf.head\\(\\)\\)\")",
+      "Bash(python -c \"import geopandas as gpd; gdf = gpd.read_file\\('d:/GITHUB_OET/ncftools/SHP_NC/003_net_faces.shp'\\); print\\('Columns:', list\\(gdf.columns\\)\\); print\\('\\\\nGeometry types:', gdf.geometry.geom_type.value_counts\\(\\).to_dict\\(\\)\\); print\\('\\\\nFirst rows:\\\\n', gdf.head\\(\\)\\)\")",
+      "Bash(python -m ncftools.transzone1 -i SHP_NC/001_net_faces.shp)"
     ]
   }
 }
