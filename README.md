@@ -53,6 +53,9 @@ nc2shp -i mesh.nc -q
 Buffer triangle mesh faces by +1 m to form a transition zone, then select all faces that intersect it.
 Outputs `trans_zone.shp` and `trans_zone_extend.shp`.
 
+Triangles are identified from the `type` attribute column when present; otherwise they are
+detected automatically by vertex count (closed rings with 3 unique vertices).
+
 ```bash
 transzone1 -i SHP_NC/FlowFM_net_faces.shp
 transzone1 -i SHP_NC/FlowFM_net_faces.shp -o SHP_TRANS

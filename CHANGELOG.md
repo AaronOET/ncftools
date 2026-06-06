@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.6.1] - 2026-06-07
+
+### Fixed
+
+- `transzone1`: falls back to geometry-based triangle detection (vertex count) when
+  the input shapefile has no `type` attribute column
+
+---
+
+## [0.6.0] - 2026-06-07
+
 ### Added
 
 - `transzone1` CLI tool: buffers triangle faces by +1 m to form a transition zone,
