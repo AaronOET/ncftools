@@ -17,7 +17,13 @@
       "Bash(gh workflow *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "PowerShell(Select-String -Path \"C:\\\\Users\\\\user\\\\.claude\\\\projects\\\\d--GITHUB-OET-ncftools\\\\f4666917-276b-4b39-b52d-9e39112a88c3\\\\tool-results\\\\bjitt0k6o.txt\" -Pattern \"error|Error|failed|403|400|HTTPError|invalid\" | Select-Object -Last 20 | ForEach-Object { $_.Line })"
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\user\\\\.claude\\\\projects\\\\d--GITHUB-OET-ncftools\\\\f4666917-276b-4b39-b52d-9e39112a88c3\\\\tool-results\\\\bjitt0k6o.txt\" -Pattern \"error|Error|failed|403|400|HTTPError|invalid\" | Select-Object -Last 20 | ForEach-Object { $_.Line })",
+      "Bash(Get-ChildItem -Path \"d:\\\\GITHUB_OET\\\\ncftools\\\\prototype\\\\transzone\\\\\" -File -Recurse | Select-Object -ExpandProperty FullName)",
+      "Bash(Get-ChildItem -Path d:\\\\GITHUB_OET\\\\ncftools -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(pip install *)",
+      "Bash(transzone1 --help)",
+      "Bash(transzone2 --help)"
     ]
   }
 }
