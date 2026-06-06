@@ -15,8 +15,8 @@ TOOL_DESCRIPTIONS = {
         quadrilaterals), and the spatial extent of the mesh.
 
         Examples:
-            meshinfo -f FlowFM_net.nc    # Display mesh info for a given file
-            meshinfo -f grid.nc          # Any FlowFM mesh NetCDF file
+            meshinfo -i FlowFM_net.nc    # Display mesh info for a given file
+            meshinfo -i grid.nc          # Any FlowFM mesh NetCDF file
     """,
 }
 
