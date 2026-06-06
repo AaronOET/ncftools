@@ -4,6 +4,7 @@ Top-level `ncftools` command. Running `ncftools -h` (or with no arguments)
 prints the same information shown by `ncftools-info`.
 """
 
+import importlib.metadata
 import sys
 
 from . import describe
@@ -23,6 +24,10 @@ def main():
 
     if not args or args[0] in ('-h', '--help'):
         _print_info()
+        return
+
+    if args[0] in ('-v', '--version'):
+        print(f"ncftools {importlib.metadata.version('ncftools')}")
         return
 
     tool = args[0]
