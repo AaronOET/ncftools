@@ -5,6 +5,7 @@ Uses netCDF4 Python bindings
 """
 
 import argparse
+import importlib.metadata
 import os
 import sys
 
@@ -72,6 +73,12 @@ The tool displays:
   - Element type distribution (triangles vs quadrilaterals)
   - Spatial extent (X and Y coordinate ranges)
         """,
+    )
+
+    parser.add_argument(
+        '-v', '--version',
+        action='version',
+        version=f'%(prog)s {importlib.metadata.version("ncftools")}',
     )
 
     parser.add_argument(
