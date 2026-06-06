@@ -17,6 +17,9 @@ pip install -e .
 ### Command-line
 
 ```bash
+# Check installed version
+meshinfo --version
+
 # List all available commands
 ncftools-info
 
