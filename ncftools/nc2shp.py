@@ -15,8 +15,7 @@ import sys
 import netCDF4 as nc
 import numpy as np
 import geopandas as gpd
-from shapely.geometry import Polygon
-from shapely.ops import unary_union
+import shapely
 
 
 def read_mesh_netcdf(file_path, quiet=False):
@@ -71,65 +70,65 @@ def create_polygons(face_x, face_y, quiet=False):
     """
     Build Shapely Polygon objects from mesh face coordinate arrays.
 
+    Vectorized over all faces at once: the per-node validity mask, ring
+    coordinates, and polygon construction/repair are computed with numpy
+    and shapely's array API rather than a per-face Python loop.
+
     Returns:
         list[Polygon]
     """
     _print("Creating polygons from mesh faces...", quiet)
 
-    polygons = []
-    n_invalid = 0
-    tri = quad = 0
+    x_data = np.ma.getdata(face_x).astype(np.float64)
+    y_data = np.ma.getdata(face_y).astype(np.float64)
+    valid = (
+        ~np.ma.getmaskarray(face_x)
+        & ~np.ma.getmaskarray(face_y)
+        & (np.abs(x_data) < 1e30)
+        & (np.abs(y_data) < 1e30)
+    )
 
-    for i in range(len(face_x)):
-        coords = [
-            (float(face_x[i, j]), float(face_y[i, j]))
-            for j in range(face_x.shape[1])
-            if (not np.ma.is_masked(face_x[i, j])
-                and not np.ma.is_masked(face_y[i, j])
-                and abs(face_x[i, j]) < 1e30
-                and abs(face_y[i, j]) < 1e30)
-        ]
+    n_valid_per_face = valid.sum(axis=1)
+    keep_face = n_valid_per_face >= 3
 
-        if len(coords) < 3:
-            n_invalid += 1
-            continue
+    row_idx, col_idx = np.nonzero(valid & keep_face[:, None])
+    coords = np.column_stack((x_data[row_idx, col_idx], y_data[row_idx, col_idx]))
 
-        if coords[0] != coords[-1]:
-            coords.append(coords[0])
+    kept_face_ids = np.nonzero(keep_face)[0]
+    ring_id = np.full(len(keep_face), -1, dtype=np.int64)
+    ring_id[kept_face_ids] = np.arange(kept_face_ids.size)
+    ring_indices = ring_id[row_idx]
 
-        try:
-            poly = Polygon(coords)
-            if not poly.is_valid or poly.is_empty:
-                poly = poly.buffer(0)
-            if poly.is_valid and not poly.is_empty:
-                polygons.append(poly)
-                n = len(coords) - 1  # exclude closing duplicate
-                if n == 3:
-                    tri += 1
-                elif n == 4:
-                    quad += 1
-            else:
-                n_invalid += 1
-        except Exception as e:
-            n_invalid += 1
-            if not quiet:
-                print(f"  Warning: face {i} skipped: {e}")
+    rings = shapely.linearrings(coords, indices=ring_indices)
+    polys = shapely.polygons(rings)
+
+    bad = ~shapely.is_valid(polys) | shapely.is_empty(polys)
+    if bad.any():
+        polys[bad] = shapely.buffer(polys[bad], 0)
+        bad = ~shapely.is_valid(polys) | shapely.is_empty(polys)
+
+    n_invalid = int(len(face_x) - keep_face.sum()) + int(bad.sum())
+    polys = polys[~bad]
+    node_counts = n_valid_per_face[kept_face_ids][~bad]
+
+    tri = int((node_counts == 3).sum())
+    quad = int((node_counts == 4).sum())
 
     if not quiet:
-        print(f"  Valid polygons: {len(polygons)}  "
+        print(f"  Valid polygons: {len(polys)}  "
               f"(triangles: {tri}, quads: {quad}, skipped: {n_invalid})")
 
-    return polygons
+    return list(polys)
 
 
 def create_geodataframe(polygons, crs="EPSG:3826"):
     """Build a GeoDataFrame from a list of Shapely polygons."""
     data = {
         'face_id': range(len(polygons)),
-        'area': [p.area for p in polygons],
+        'area': shapely.area(polygons),
         'type': [
-            'triangle' if len(list(p.exterior.coords)) == 4
-            else 'quadrilateral' if len(list(p.exterior.coords)) == 5
+            'triangle' if len(p.exterior.coords) == 4
+            else 'quadrilateral' if len(p.exterior.coords) == 5
             else 'other'
             for p in polygons
         ],
@@ -140,7 +139,7 @@ def create_geodataframe(polygons, crs="EPSG:3826"):
 def dissolve_geodataframe(gdf, quiet=False):
     """Dissolve all polygons into a single geometry."""
     _print("Dissolving polygons...", quiet)
-    geom = unary_union(gdf.geometry.tolist())
+    geom = shapely.union_all(gdf.geometry.values)
     dissolved = gpd.GeoDataFrame(
         {'id': [1], 'total_area': [geom.area], 'count': [len(gdf)]},
         geometry=[geom],
