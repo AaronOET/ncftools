@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.2] - 2026-07-22
+
+### Changed
+
+- `nc2shp`: `create_polygons` now builds mesh face polygons with vectorized
+  numpy/shapely array operations instead of a per-face Python loop (~20x
+  faster on large meshes); `create_geodataframe` and `dissolve_geodataframe`
+  likewise use shapely's vectorized `area`/`union_all` instead of per-geometry
+  Python calls
+- Raised minimum `shapely` requirement to `>=2.0.0` (needed for the vectorized
+  array API)
+
+---
+
 ## [0.6.1] - 2026-06-07
 
 ### Fixed
