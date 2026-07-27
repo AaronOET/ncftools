@@ -58,6 +58,43 @@ TOOL_DESCRIPTIONS = {
             transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -o SHP_TRANS
             transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -q
     """,
+    'setncrain': """
+        Point a D-Flow FM model at a NetCDF rainfall forcing file.
+
+        Rewrites every [Meteo] block of the .ext file to use the given NetCDF
+        file as rainfall forcing:
+          quantity=rainfall, forcingFile=<*.nc>, forcingFileType=netcdf
+        If the .ext file is missing it is created from a built-in template and
+        registered in the .mdu as ExtForceFileNew.
+
+        The NetCDF time axis is read and the model times in the .mdu are set
+        to match it (in the model's Tunit):
+          RefDate  midnight of the first time stamp
+          TStart   offset of the first time stamp from RefDate
+          TStop    offset of the last  time stamp from RefDate
+
+        Examples:
+            setncrain -i May28_Event.nc
+            setncrain -i data/May28_Event.nc --ext dflowfm/FM_model_bnd.ext
+            setncrain -i May28_Event.nc --no-time
+            setncrain -i May28_Event.nc --no-backup --as-given
+    """,
+    'rnxml': """
+        Rename dimr.xml to dimr_config.xml.
+
+        D-HYDRO / Delft3D FM writes its DIMR control file as dimr.xml, while
+        the DIMR runner expects dimr_config.xml. This tool renames the file in
+        place, leaving its contents untouched.
+
+        If the target name already exists the rename is refused unless --force
+        is given, in which case a .bak copy of the old target is kept.
+
+        Examples:
+            rnxml
+            rnxml -i model/dimr.xml
+            rnxml -i dimr.xml -o dimr_config.xml --force
+            rnxml -i dimr.xml -q
+    """,
 }
 
 

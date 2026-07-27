@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.0] - 2026-07-27
+
+### Added
+
+- `rnxml` CLI tool: renames `dimr.xml` to `dimr_config.xml` in place, leaving the
+  file contents untouched; refuses to clobber an existing target unless `--force`
+  is given, in which case a `.bak` copy of the old target is kept
+- Public helper `ncftools.rnxml.rename_xml()` for use from Python
+
+---
+
+## [0.7.0] - 2026-07-27
+
+### Added
+
+- `setncrain` CLI tool: rewrites every `[Meteo]` block of a D-Flow FM `.ext` file to
+  use a NetCDF rainfall forcing file (`quantity=rainfall`, `forcingFile=<*.nc>`,
+  `forcingFileType=netcdf`), creating the `.ext` from a built-in template and
+  registering it as `ExtForceFileNew` when it is missing
+- `setncrain` reads the NetCDF time axis and sets `RefDate`, `TStart` and `TStop`
+  in the `.mdu` accordingly, converted to the model's `Tunit`; skip with `--no-time`
+- Public helper `ncftools.setncrain.set_nc_rainfall()` for use from Python
+
+---
+
 ## [0.6.2] - 2026-07-22
 
 ### Changed
