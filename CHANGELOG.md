@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0] - 2026-07-31
+
+### Added
+
+- `nc2shp`: `-d`/`--dissolve` flag to write `{stem}_dissolved.shp` alongside the
+  faces shapefile
+
+### Changed
+
+- **Breaking**: `nc2shp` no longer writes the dissolved shapefile by default; pass
+  `-d`/`--dissolve` to restore the previous behaviour. `mesh_to_shp()` gains a
+  matching `dissolve=False` argument and returns `None` as the dissolved path when
+  it is not requested
+
+---
+
 ## [0.8.0] - 2026-07-27
 
 ### Added

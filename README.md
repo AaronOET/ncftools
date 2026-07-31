@@ -42,10 +42,13 @@ meshinfo -h
 
 ### nc2shp
 
-Convert a NetCDF mesh file to ESRI Shapefiles. Outputs `{stem}_faces.shp` and `{stem}_dissolved.shp` in the output directory.
+Convert a NetCDF mesh file to ESRI Shapefiles. Outputs `{stem}_faces.shp` in the output
+directory. Pass `-d`/`--dissolve` to additionally write `{stem}_dissolved.shp`, a single
+polygon dissolved from all mesh faces (slower on large meshes).
 
 ```bash
 nc2shp -i FlowFM_net.nc
+nc2shp -i mesh.nc -d
 nc2shp -i mesh.nc -o output --crs EPSG:4326
 nc2shp -i mesh.nc -q
 ```

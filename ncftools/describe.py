@@ -21,12 +21,14 @@ TOOL_DESCRIPTIONS = {
     'nc2shp': """
         Convert a NetCDF mesh file to ESRI Shapefiles.
 
-        Reads a UGRID-compliant NetCDF mesh file and writes two shapefiles:
+        Reads a UGRID-compliant NetCDF mesh file and writes:
           {stem}_faces.shp      one polygon per mesh face
           {stem}_dissolved.shp  single dissolved polygon of the entire mesh
+                                (only written with -d/--dissolve)
 
         Examples:
             nc2shp -i FlowFM_net.nc
+            nc2shp -i mesh.nc -d          # also write the dissolved polygon
             nc2shp -i mesh.nc -o output --crs EPSG:4326
             nc2shp -i mesh.nc -q
     """,

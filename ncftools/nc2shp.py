@@ -2,9 +2,10 @@
 """
 nc2shp - Convert NetCDF mesh faces to ESRI Shapefiles
 
-Reads a UGRID-compliant NetCDF mesh file and writes two shapefiles:
+Reads a UGRID-compliant NetCDF mesh file and writes:
   {stem}_faces.shp      - one polygon per mesh face
   {stem}_dissolved.shp  - single dissolved polygon of the entire mesh
+                          (only with --dissolve)
 """
 
 import argparse
@@ -149,25 +150,30 @@ def dissolve_geodataframe(gdf, quiet=False):
     return dissolved
 
 
-def mesh_to_shp(input_file, output_dir="SHP_NC", crs="EPSG:3826", quiet=False):
+def mesh_to_shp(input_file, output_dir="SHP_NC", crs="EPSG:3826", quiet=False,
+                dissolve=False):
     """
-    Convert a NetCDF mesh file to face and dissolved shapefiles.
+    Convert a NetCDF mesh file to face and (optionally) dissolved shapefiles.
 
     Args:
         input_file (str): Path to the input NetCDF file.
         output_dir (str): Directory for output shapefiles.
         crs (str): CRS for output shapefiles.
         quiet (bool): Suppress non-error output.
+        dissolve (bool): Also write a single dissolved polygon shapefile.
 
     Returns:
-        tuple[str, str]: Paths to (faces_shp, dissolved_shp).
+        tuple[str, str | None]: Paths to (faces_shp, dissolved_shp). The second
+        element is None when dissolve is False.
     """
     _print("=== NetCDF Mesh to Shapefile Converter ===", quiet)
 
     os.makedirs(output_dir, exist_ok=True)
     stem = os.path.splitext(os.path.basename(input_file))[0]
     out_faces = os.path.join(output_dir, f"{stem}_faces.shp")
-    out_dissolved = os.path.join(output_dir, f"{stem}_dissolved.shp")
+    out_dissolved = (
+        os.path.join(output_dir, f"{stem}_dissolved.shp") if dissolve else None
+    )
 
     face_x, face_y, node_x, node_y, face_nodes, var_names = read_mesh_netcdf(
         input_file, quiet
@@ -181,9 +187,10 @@ def mesh_to_shp(input_file, output_dir="SHP_NC", crs="EPSG:3826", quiet=False):
     _print(f"Saving faces shapefile:    {out_faces}", quiet)
     gdf.to_file(out_faces)
 
-    dissolved = dissolve_geodataframe(gdf, quiet)
-    _print(f"Saving dissolved shapefile: {out_dissolved}", quiet)
-    dissolved.to_file(out_dissolved)
+    if dissolve:
+        dissolved = dissolve_geodataframe(gdf, quiet)
+        _print(f"Saving dissolved shapefile: {out_dissolved}", quiet)
+        dissolved.to_file(out_dissolved)
 
     if not quiet:
         bounds = gdf.total_bounds
@@ -191,7 +198,8 @@ def mesh_to_shp(input_file, output_dir="SHP_NC", crs="EPSG:3826", quiet=False):
         print("\n=== SUMMARY ===")
         print(f"  Input:     {input_file}")
         print(f"  Faces:     {out_faces}")
-        print(f"  Dissolved: {out_dissolved}")
+        if dissolve:
+            print(f"  Dissolved: {out_dissolved}")
         print(f"  Faces processed: {len(face_x):,}  Valid: {len(polygons):,}")
         print(f"  CRS: {gdf.crs}")
         for t, n in counts.items():
@@ -218,6 +226,7 @@ def main():
         epilog="""
 Examples:
   nc2shp -i FlowFM_net.nc
+  nc2shp -i mesh.nc -d
   nc2shp -i mesh.nc -o output --crs EPSG:4326
   nc2shp -i mesh.nc -q
         """,
@@ -246,6 +255,12 @@ Examples:
         help='Coordinate reference system (default: EPSG:3826)',
     )
     parser.add_argument(
+        '-d', '--dissolve',
+        action='store_true',
+        help='Also write {stem}_dissolved.shp, a single polygon dissolved '
+             'from all mesh faces (slower on large meshes)',
+    )
+    parser.add_argument(
         '-q', '--quiet',
         action='store_true',
         help='Suppress non-error output',
@@ -259,11 +274,12 @@ Examples:
 
     try:
         faces, dissolved = mesh_to_shp(
-            args.input, args.output_dir, args.crs, args.quiet
+            args.input, args.output_dir, args.crs, args.quiet, args.dissolve
         )
         if args.quiet:
             print(faces)
-            print(dissolved)
+            if dissolved:
+                print(dissolved)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
