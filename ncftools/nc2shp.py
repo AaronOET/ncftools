@@ -226,7 +226,7 @@ def main():
         epilog="""
 Examples:
   nc2shp -i FlowFM_net.nc
-  nc2shp -i mesh.nc -d
+  nc2shp -i mesh.nc -d          # also write the dissolved polygon
   nc2shp -i mesh.nc -o output --crs EPSG:4326
   nc2shp -i mesh.nc -q
         """,
