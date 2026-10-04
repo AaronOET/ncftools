@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ncftools"
-version = "0.9.3"
+version = "0.10.0"
 authors = [
     { name = "aaronchh", email = "aaronhsu219@gmail.com" },
 ]

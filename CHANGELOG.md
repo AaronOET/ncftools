@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.10.0] - 2026-10-05
+
+### Added
+
+- `meshinfo`: reads D-Flow FM 2D3D meshes (lowercase `mesh2d_*` variables, e.g. net
+  files written by RGFGRID), detected automatically. Also reports the node bed-level
+  range when the file's node z variable holds data
+- `meshinfo`: output starts with a "Mesh type" line naming the detected format
+
+---
+
 ## [0.9.3] - 2026-10-04
 
 ### Added

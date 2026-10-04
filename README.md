@@ -33,7 +33,9 @@ ncftools-info
 
 ### meshinfo
 
-Display mesh information from a FlowFM NetCDF file.
+Display mesh information from a FlowFM NetCDF file. UGRID (`Mesh2d_*`), D-Flow FM 2D3D
+(`mesh2d_*`, e.g. from RGFGRID) and old-format (`NetNode`/`NetLink`) net files are
+detected automatically.
 
 ```bash
 meshinfo FlowFM_net.nc

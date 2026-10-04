@@ -14,6 +14,12 @@ import numpy as np
 
 MAX_CELL_NODES = 6  # D-Flow FM only treats closed polygons up to 6 nodes as cells
 
+MESH_TYPES = {
+    'Mesh2d': 'UGRID FlowFM mesh (Mesh2d_* variables)',
+    'mesh2d': 'D-Flow FM 2D3D mesh (mesh2d_* variables)',
+    'net': 'Old-format net file (NetNode/NetLink variables)',
+}
+
 
 def find_net_cells(x, y, links):
     """
@@ -64,25 +70,37 @@ def find_net_cells(x, y, links):
     return n_nodes[is_cell]
 
 
-def _read_ugrid(dataset):
-    """Read counts and coordinates from a UGRID (Mesh2d_*) file."""
+def _read_ugrid(dataset, prefix='Mesh2d'):
+    """
+    Read counts and coordinates from a UGRID file.
+
+    Args:
+        dataset (netCDF4.Dataset): Open mesh file
+        prefix (str): Variable/dimension prefix, 'Mesh2d' for FlowFM map/net
+            files or 'mesh2d' for D-Flow FM 2D3D net files (e.g. from RGFGRID)
+    """
+    variables = dataset.variables
     info = {
-        'nodes': dataset.dimensions['Mesh2d_nNodes'].size,
-        'faces': dataset.dimensions['Mesh2d_nFaces'].size,
-        'edges': dataset.dimensions['Mesh2d_nEdges'].size,
+        'nodes': dataset.dimensions[f'{prefix}_nNodes'].size,
+        'faces': dataset.dimensions[f'{prefix}_nFaces'].size,
+        'edges': dataset.dimensions[f'{prefix}_nEdges'].size,
         'face_sizes': None,
         'x': None,
         'y': None,
+        'z': None,
     }
 
-    if 'Mesh2d_face_nodes' in dataset.variables:
-        face_nodes = dataset.variables['Mesh2d_face_nodes'][:]
-        fill_value = dataset.variables['Mesh2d_face_nodes']._FillValue
+    if f'{prefix}_face_nodes' in variables:
+        face_nodes = np.ma.getdata(variables[f'{prefix}_face_nodes'][:])
+        fill_value = variables[f'{prefix}_face_nodes']._FillValue
         info['face_sizes'] = np.sum(face_nodes != fill_value, axis=1)
 
-    if 'Mesh2d_node_x' in dataset.variables and 'Mesh2d_node_y' in dataset.variables:
-        info['x'] = dataset.variables['Mesh2d_node_x'][:]
-        info['y'] = dataset.variables['Mesh2d_node_y'][:]
+    if f'{prefix}_node_x' in variables and f'{prefix}_node_y' in variables:
+        info['x'] = variables[f'{prefix}_node_x'][:]
+        info['y'] = variables[f'{prefix}_node_y'][:]
+
+    if f'{prefix}_node_z' in variables:
+        info['z'] = variables[f'{prefix}_node_z'][:]
 
     return info
 
@@ -102,6 +120,7 @@ def _read_net(dataset):
         'face_sizes': face_sizes,
         'x': x,
         'y': y,
+        'z': None,
     }
 
 
@@ -109,25 +128,31 @@ def show_mesh_info(nc_file):
     """
     Display mesh information from a FlowFM NetCDF file.
 
-    Supports both UGRID map/net files (Mesh2d_* variables) and old-format
-    net files (NetNode_x/NetNode_y/NetLink), whose cells are derived from
-    the links.
+    Supports UGRID map/net files (Mesh2d_* variables), D-Flow FM 2D3D net
+    files (mesh2d_* variables, as written by RGFGRID) and old-format net
+    files (NetNode_x/NetNode_y/NetLink), whose cells are derived from the
+    links. The format is detected automatically.
 
     Args:
         nc_file (str): Path to the FlowFM NetCDF mesh file
     """
     with nc.Dataset(nc_file, 'r') as dataset:
-        if 'Mesh2d_nNodes' in dataset.dimensions:
-            info = _read_ugrid(dataset)
+        prefix = next((p for p in ('Mesh2d', 'mesh2d')
+                       if f'{p}_nNodes' in dataset.dimensions), None)
+        if prefix:
+            info = _read_ugrid(dataset, prefix=prefix)
+            mesh_type = MESH_TYPES[prefix]
             derived = False
         elif all(v in dataset.variables for v in ('NetNode_x', 'NetNode_y', 'NetLink')):
             info = _read_net(dataset)
+            mesh_type = MESH_TYPES['net']
             derived = True
         else:
-            raise ValueError('no Mesh2d_* or NetNode/NetLink variables found')
+            raise ValueError('no Mesh2d_*/mesh2d_* or NetNode/NetLink variables found')
 
     print(f"FlowFM Mesh Information from: {nc_file}")
     print("=" * 60)
+    print(f"Mesh type:                {mesh_type}")
 
     nodes, faces, edges = info['nodes'], info['faces'], info['edges']
     suffix = "  (derived from NetLink)" if derived else ""
@@ -157,6 +182,12 @@ def show_mesh_info(nc_file):
         print(f"  X range: {np.min(x_coords):.1f} to {np.max(x_coords):.1f}")
         print(f"  Y range: {np.min(y_coords):.1f} to {np.max(y_coords):.1f}")
 
+    if info['z'] is not None and np.ma.count(info['z']):
+        z_coords = info['z']
+
+        print("\nBed level (node z):")
+        print(f"  Z range: {np.ma.min(z_coords):.3f} to {np.ma.max(z_coords):.3f}")
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -171,9 +202,11 @@ Examples:
   meshinfo -h                      # Show this help message
 
 The tool displays:
+  - Mesh type (UGRID Mesh2d_*, D-Flow FM 2D3D mesh2d_*, or old NetNode/NetLink)
   - Number of nodes, faces, and edges
   - Element type distribution (triangles vs quadrilaterals)
   - Spatial extent (X and Y coordinate ranges)
+  - Bed level range of the nodes (when the file has node z values)
         """,
     )
 
