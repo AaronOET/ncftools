@@ -36,7 +36,7 @@ ncftools-info
 Display mesh information from a FlowFM NetCDF file.
 
 ```bash
-meshinfo -i FlowFM_net.nc
+meshinfo FlowFM_net.nc
 meshinfo -h
 ```
 

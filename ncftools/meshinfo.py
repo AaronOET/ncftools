@@ -63,8 +63,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  meshinfo -i FlowFM_net.nc        # Specify a NetCDF mesh file
-  meshinfo -i grid.nc              # Use any FlowFM mesh file
+  meshinfo                         # Use default FlowFM_net.nc
+  meshinfo grid.nc                 # Use any FlowFM mesh file
+  meshinfo -i grid.nc              # Same, with the -i flag
   meshinfo -h                      # Show this help message
 
 The tool displays:
@@ -75,13 +76,22 @@ The tool displays:
     )
 
     parser.add_argument(
-        '-i', '--input',
-        required=True,
+        'file',
+        nargs='?',
         metavar='FILE',
-        help='Path to the FlowFM NetCDF mesh file',
+        help='Path to the FlowFM NetCDF mesh file (default: FlowFM_net.nc)',
+    )
+    parser.add_argument(
+        '-i', '--input',
+        metavar='FILE',
+        help='Same as FILE (kept for backward compatibility)',
     )
 
     args = parser.parse_args()
+
+    if args.file and args.input:
+        parser.error('give the mesh file either as FILE or with -i, not both')
+    args.input = args.file or args.input or 'FlowFM_net.nc'
 
     if not os.path.isfile(args.input):
         print(f"Error: File '{args.input}' not found.")

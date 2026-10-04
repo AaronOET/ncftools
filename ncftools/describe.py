@@ -15,8 +15,8 @@ TOOL_DESCRIPTIONS = {
         quadrilaterals), and the spatial extent of the mesh.
 
         Examples:
-            meshinfo -i FlowFM_net.nc    # Display mesh info for a given file
-            meshinfo -i grid.nc          # Any FlowFM mesh NetCDF file
+            meshinfo FlowFM_net.nc       # Display mesh info for a given file
+            meshinfo grid.nc             # Any FlowFM mesh NetCDF file
     """,
     'nc2shp': """
         Convert a NetCDF mesh file to ESRI Shapefiles.

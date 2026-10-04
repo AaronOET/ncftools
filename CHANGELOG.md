@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.2] - 2026-10-04
+
+### Changed
+
+- `meshinfo`: the mesh file can be passed positionally (`meshinfo FlowFM_net.nc`);
+  `-i`/`--input` is now optional and still accepted. With no file given it defaults
+  to `FlowFM_net.nc`
+- README and `ncftools-info` examples use the positional form
+
+---
+
 ## [0.9.1] - 2026-08-01
 
 ### Changed
