@@ -27,10 +27,10 @@ TOOL_DESCRIPTIONS = {
                                 (only written with -d/--dissolve)
 
         Examples:
-            nc2shp -i FlowFM_net.nc
-            nc2shp -i mesh.nc -d          # also write the dissolved polygon
-            nc2shp -i mesh.nc -o output --crs EPSG:4326
-            nc2shp -i mesh.nc -q
+            nc2shp FlowFM_net.nc
+            nc2shp mesh.nc -d          # also write the dissolved polygon
+            nc2shp mesh.nc -o output --crs EPSG:4326
+            nc2shp mesh.nc -q
     """,
     'transzone1': """
         Extract transition zone and intersecting mesh faces from a shapefile.
@@ -42,9 +42,9 @@ TOOL_DESCRIPTIONS = {
           trans_zone_faces.shp  all faces intersecting the transition zone
 
         Examples:
-            transzone1 -i SHP_NC/FlowFM_net_faces.shp
-            transzone1 -i SHP_NC/FlowFM_net_faces.shp -o SHP_TRANS
-            transzone1 -i SHP_NC/FlowFM_net_faces.shp -q
+            transzone1 SHP_NC/FlowFM_net_faces.shp
+            transzone1 SHP_NC/FlowFM_net_faces.shp -o SHP_TRANS
+            transzone1 SHP_NC/FlowFM_net_faces.shp -q
     """,
     'transzone2': """
         Extract core transition zone faces (fully within shrunk zone).
@@ -56,9 +56,9 @@ TOOL_DESCRIPTIONS = {
           trans_zone_core.shp   faces fully inside the core transition zone
 
         Examples:
-            transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp
-            transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -o SHP_TRANS
-            transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -q
+            transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp
+            transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -o SHP_TRANS
+            transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -q
     """,
     'setncrain': """
         Point a D-Flow FM model at a NetCDF rainfall forcing file.
@@ -93,9 +93,9 @@ TOOL_DESCRIPTIONS = {
 
         Examples:
             rnxml
-            rnxml -i model/dimr.xml
-            rnxml -i dimr.xml -o dimr_config.xml --force
-            rnxml -i dimr.xml -q
+            rnxml model/dimr.xml
+            rnxml dimr.xml -o dimr_config.xml --force
+            rnxml dimr.xml -q
     """,
 }
 

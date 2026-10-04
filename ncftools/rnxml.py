@@ -90,10 +90,11 @@ def main():
         epilog="""
 Examples:
   rnxml
-  rnxml -i dimr.xml
-  rnxml -i model/dimr.xml
-  rnxml -i dimr.xml -o dimr_config.xml --force
-  rnxml -i dimr.xml -q
+  rnxml dimr.xml
+  rnxml -i dimr.xml             # same, with the -i flag
+  rnxml model/dimr.xml
+  rnxml dimr.xml -o dimr_config.xml --force
+  rnxml dimr.xml -q
         """,
     )
 
@@ -103,10 +104,15 @@ Examples:
         version=f'%(prog)s {importlib.metadata.version("ncftools")}',
     )
     parser.add_argument(
-        '-i', '--input',
-        default=DEFAULT_INPUT,
+        'file',
+        nargs='?',
         metavar='FILE',
         help=f'File to rename (default: {DEFAULT_INPUT})',
+    )
+    parser.add_argument(
+        '-i', '--input',
+        metavar='FILE',
+        help='Same as FILE (kept for backward compatibility)',
     )
     parser.add_argument(
         '-o', '--output-name',
@@ -131,6 +137,10 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    if args.file and args.input:
+        parser.error('give the file either as FILE or with -i, not both')
+    args.input = args.file or args.input or DEFAULT_INPUT
 
     try:
         dst = rename_xml(

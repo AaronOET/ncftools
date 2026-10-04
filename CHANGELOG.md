@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.11.0] - 2026-10-05
+
+### Changed
+
+- `nc2shp`, `rnxml`, `transzone1`, `transzone2`: the input file can be passed
+  positionally (`nc2shp FlowFM_net.nc`); `-i`/`--input` is now optional and still
+  accepted. Defaults are unchanged (`nc2shp` still needs a file)
+- README and `ncftools-info` examples use the positional form
+
+---
+
 ## [0.10.0] - 2026-10-05
 
 ### Added

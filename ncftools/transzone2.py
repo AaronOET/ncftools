@@ -75,9 +75,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp
-  transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -o SHP_TRANS
-  transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -q
+  transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp
+  transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp  # same, with the -i flag
+  transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -o SHP_TRANS
+  transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -q
         """,
     )
 
@@ -87,10 +88,15 @@ Examples:
         version=f'%(prog)s {importlib.metadata.version("ncftools")}',
     )
     parser.add_argument(
-        '-i', '--input',
-        default='SHP_NC/FlowFM_net_faces.shp',
+        'file',
+        nargs='?',
         metavar='FILE',
         help='Path to FlowFM_net_faces.shp (default: SHP_NC/FlowFM_net_faces.shp)',
+    )
+    parser.add_argument(
+        '-i', '--input',
+        metavar='FILE',
+        help='Same as FILE (kept for backward compatibility)',
     )
     parser.add_argument(
         '-z', '--zone-faces',
@@ -111,6 +117,10 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    if args.file and args.input:
+        parser.error('give the faces shapefile either as FILE or with -i, not both')
+    args.input = args.file or args.input or 'SHP_NC/FlowFM_net_faces.shp'
 
     if not os.path.isfile(args.input):
         print(f"Error: File '{args.input}' not found.", file=sys.stderr)

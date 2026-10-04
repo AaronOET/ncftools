@@ -225,10 +225,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  nc2shp -i FlowFM_net.nc
-  nc2shp -i mesh.nc -d          # also write the dissolved polygon
-  nc2shp -i mesh.nc -o output --crs EPSG:4326
-  nc2shp -i mesh.nc -q
+  nc2shp FlowFM_net.nc
+  nc2shp -i FlowFM_net.nc       # same, with the -i flag
+  nc2shp mesh.nc -d             # also write the dissolved polygon
+  nc2shp mesh.nc -o output --crs EPSG:4326
+  nc2shp mesh.nc -q
         """,
     )
 
@@ -238,10 +239,15 @@ Examples:
         version=f'%(prog)s {importlib.metadata.version("ncftools")}',
     )
     parser.add_argument(
-        '-i', '--input',
-        required=True,
+        'file',
+        nargs='?',
         metavar='FILE',
         help='Path to the NetCDF mesh file',
+    )
+    parser.add_argument(
+        '-i', '--input',
+        metavar='FILE',
+        help='Same as FILE (kept for backward compatibility)',
     )
     parser.add_argument(
         '-o', '--output-dir',
@@ -267,6 +273,12 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    if args.file and args.input:
+        parser.error('give the mesh file either as FILE or with -i, not both')
+    args.input = args.file or args.input
+    if not args.input:
+        parser.error('the mesh file is required (give it as FILE or with -i)')
 
     if not os.path.isfile(args.input):
         print(f"Error: File '{args.input}' not found.", file=sys.stderr)

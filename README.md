@@ -49,10 +49,10 @@ directory. Pass `-d`/`--dissolve` to additionally write `{stem}_dissolved.shp`, 
 polygon dissolved from all mesh faces (slower on large meshes).
 
 ```bash
-nc2shp -i FlowFM_net.nc
-nc2shp -i mesh.nc -d
-nc2shp -i mesh.nc -o output --crs EPSG:4326
-nc2shp -i mesh.nc -q
+nc2shp FlowFM_net.nc
+nc2shp mesh.nc -d
+nc2shp mesh.nc -o output --crs EPSG:4326
+nc2shp mesh.nc -q
 ```
 
 ### transzone1
@@ -64,9 +64,9 @@ Triangles are identified from the `type` attribute column when present; otherwis
 detected automatically by vertex count (closed rings with 3 unique vertices).
 
 ```bash
-transzone1 -i SHP_NC/FlowFM_net_faces.shp
-transzone1 -i SHP_NC/FlowFM_net_faces.shp -o SHP_TRANS
-transzone1 -i SHP_NC/FlowFM_net_faces.shp -q
+transzone1 SHP_NC/FlowFM_net_faces.shp
+transzone1 SHP_NC/FlowFM_net_faces.shp -o SHP_TRANS
+transzone1 SHP_NC/FlowFM_net_faces.shp -q
 ```
 
 ### transzone2
@@ -75,9 +75,9 @@ Shrink `trans_zone_extend.shp` (output of `transzone1`) by −1 m and select fac
 Outputs `trans_zone_core.shp`.
 
 ```bash
-transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp
-transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -o SHP_TRANS
-transzone2 -i SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -q
+transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp
+transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -o SHP_TRANS
+transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -q
 ```
 
 ### setncrain
@@ -120,9 +120,9 @@ overwrite it (a `.bak` copy of the old target is kept unless `--no-backup`).
 
 ```bash
 rnxml
-rnxml -i model/dimr.xml
-rnxml -i dimr.xml -o dimr_config.xml --force
-rnxml -i dimr.xml -q
+rnxml model/dimr.xml
+rnxml dimr.xml -o dimr_config.xml --force
+rnxml dimr.xml -q
 ```
 
 ## Python API
