@@ -2,7 +2,7 @@
 NCFTOOLS - A collection of tools for working with NetCDF files.
 """
 
-__version__ = '0.9.2'
+__version__ = '0.9.3'
 
 __all__ = [
     'meshinfo',

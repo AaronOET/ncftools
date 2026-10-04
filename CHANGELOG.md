@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.3] - 2026-10-04
+
+### Added
+
+- `meshinfo`: reads old-format net files (`NetNode_x`/`NetNode_y`/`NetLink`, e.g.
+  `001_net.nc`). They store no cell table, so cells are derived from the links
+
+---
+
 ## [0.9.2] - 2026-10-04
 
 ### Changed
