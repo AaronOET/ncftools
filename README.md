@@ -12,6 +12,7 @@ pip install -e .
 
 - **meshinfo**: Display mesh information from FlowFM NetCDF files (node/face/edge counts, element types, spatial extent)
 - **nc2shp**: Convert a UGRID-compliant NetCDF mesh file to ESRI Shapefiles
+- **shp2nc**: Rebuild a UGRID mesh NetCDF (D-Flow FM net file) from a cell-polygon shapefile
 - **transzone1**: Build a transition zone from triangle mesh faces and select all intersecting faces
 - **transzone2**: Extract the core transition zone — faces fully within the shrunk zone
 - **setncrain**: Point a D-Flow FM model (`.ext` / `.mdu`) at a NetCDF rainfall forcing file
@@ -53,6 +54,22 @@ nc2shp FlowFM_net.nc
 nc2shp mesh.nc -d
 nc2shp mesh.nc -o output --crs EPSG:4326
 nc2shp mesh.nc -q
+```
+
+### shp2nc
+
+Rebuild a D-Flow FM 2D net file (UGRID, `mesh2d_*` variables) from a polygon shapefile in
+which every polygon is one mesh cell — the reverse of `nc2shp`. Vertices shared by
+neighbouring cells are merged into one node (within `--tol`, default 0.001 map units),
+cells are made counter-clockwise, and edges and face centres are derived. Numeric
+shapefile attributes are kept as face variables. The CRS comes from the `.prj`; `--crs`
+is used only when it is missing. Writes `{stem}_net.nc` unless `-o` is given.
+
+```bash
+shp2nc mesh.shp
+shp2nc mesh.shp -o FlowFM_net.nc
+shp2nc mesh.shp --tol 0.01 --node-z -5.0
+shp2nc mesh.shp -q
 ```
 
 ### transzone1

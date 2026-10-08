@@ -32,6 +32,23 @@ TOOL_DESCRIPTIONS = {
             nc2shp mesh.nc -o output --crs EPSG:4326
             nc2shp mesh.nc -q
     """,
+    'shp2nc': """
+        Rebuild a UGRID mesh NetCDF file from a cell-polygon shapefile.
+
+        Reads a polygon shapefile in which every polygon is one mesh cell
+        (e.g. {stem}_faces.shp from nc2shp, or a QGIS / RGFGRID export) and
+        writes a D-Flow FM 2D net file, {stem}_net.nc by default:
+          - vertices shared by neighbouring cells are merged into one node
+            (within --tol, default 0.001 map units)
+          - cells are made counter-clockwise; edges and face centres derived
+          - numeric shapefile attributes are kept as face variables
+
+        Examples:
+            shp2nc mesh.shp
+            shp2nc mesh.shp -o FlowFM_net.nc
+            shp2nc mesh.shp --tol 0.01 --node-z -5.0
+            shp2nc mesh.shp --crs EPSG:3826   # only if mesh.prj is missing
+    """,
     'transzone1': """
         Extract transition zone and intersecting mesh faces from a shapefile.
 

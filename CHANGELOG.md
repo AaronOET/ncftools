@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.12.0] - 2026-10-09
+
+### Added
+
+- `shp2nc`: new command that rebuilds a D-Flow FM 2D net file (UGRID, `mesh2d_*`
+  variables, 1-based indices) from a polygon shapefile with one polygon per cell —
+  the reverse of `nc2shp`. Shared vertices are merged within `--tol`, cells are made
+  counter-clockwise, edges/edge-faces/face centres are derived, and numeric shapefile
+  attributes are kept as face variables. Options: `-o`, `--tol`, `--node-z`, `--crs`, `-q`
+
+---
+
 ## [0.11.0] - 2026-10-05
 
 ### Changed

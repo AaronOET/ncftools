@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ncftools"
-version = "0.11.0"
+version = "0.12.0"
 authors = [
     { name = "aaronchh", email = "aaronhsu219@gmail.com" },
 ]
@@ -34,6 +34,7 @@ ncftools-info = "ncftools.describe:main"
 ncftools = "ncftools.cli:main"
 meshinfo = "ncftools.meshinfo:main"
 nc2shp = "ncftools.nc2shp:main"
+shp2nc = "ncftools.shp2nc:main"
 transzone1 = "ncftools.transzone1:main"
 transzone2 = "ncftools.transzone2:main"
 setncrain = "ncftools.setncrain:main"

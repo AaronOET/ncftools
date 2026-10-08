@@ -2,11 +2,12 @@
 NCFTOOLS - A collection of tools for working with NetCDF files.
 """
 
-__version__ = '0.11.0'
+__version__ = '0.12.0'
 
 __all__ = [
     'meshinfo',
     'nc2shp',
+    'shp2nc',
     'transzone1',
     'transzone2',
     'setncrain',
@@ -16,6 +17,7 @@ __all__ = [
 
 from . import meshinfo
 from . import nc2shp
+from . import shp2nc
 from . import transzone1
 from . import transzone2
 from . import setncrain
