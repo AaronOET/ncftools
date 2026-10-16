@@ -11,11 +11,11 @@ pip install -e .
 ## Features
 
 - **meshinfo**: Display mesh information from FlowFM NetCDF files (node/face/edge counts, element types, spatial extent)
+- **ncinfo**: List the variables (and optionally the dimensions) in one or more NetCDF files
 - **nc2shp**: Convert a UGRID-compliant NetCDF mesh file to ESRI Shapefiles
 - **shp2nc**: Rebuild a UGRID mesh NetCDF (D-Flow FM net file) from a cell-polygon shapefile
 - **transzone1**: Build a transition zone from triangle mesh faces and select all intersecting faces
 - **transzone2**: Extract the core transition zone — faces fully within the shrunk zone
-- **setncrain**: Point a D-Flow FM model (`.ext` / `.mdu`) at a NetCDF rainfall forcing file
 - **rnxml**: Rename `dimr.xml` to `dimr_config.xml`
 
 ## Usage
@@ -41,6 +41,18 @@ detected automatically.
 ```bash
 meshinfo FlowFM_net.nc
 meshinfo -h
+```
+
+### ncinfo
+
+List the variables in one or more NetCDF files: name, data type, shape, dimensions,
+units and long name. Pass `-d`/`--dims` to also list the dimensions (name, size,
+unlimited).
+
+```bash
+ncinfo FlowFM_map.nc
+ncinfo FlowFM_map.nc -d
+ncinfo a.nc b.nc c.nc
 ```
 
 ### nc2shp
@@ -95,36 +107,6 @@ Outputs `trans_zone_core.shp`.
 transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp
 transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -o SHP_TRANS
 transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_extend.shp -q
-```
-
-### setncrain
-
-Point a D-Flow FM model at a NetCDF rainfall forcing file.
-
-Every `[Meteo]` block in the `.ext` file is rewritten to
-`quantity=rainfall`, `forcingFile=<your .nc>`, `forcingFileType=netcdf`.
-If the `.ext` file does not exist it is created from a built-in template and
-registered in the `.mdu` as `ExtForceFileNew`.
-
-The NetCDF time axis is read and the model times in the `.mdu` are set to match it
-(expressed in the model's `Tunit`):
-
-| Key | Value |
-| --- | --- |
-| `RefDate` | midnight of the first time stamp |
-| `TStart` | offset of the first time stamp from `RefDate` |
-| `TStop` | offset of the last time stamp from `RefDate` |
-
-The `forcingFile` path is written relative to the `.ext` file (D-Flow FM resolves it
-that way); use `--as-given` to write it exactly as typed. `.bak` copies of the
-modified files are written unless `--no-backup` is given.
-
-```bash
-setncrain -i May28_Event.nc
-setncrain -i data/May28_Event.nc --ext dflowfm/FM_model_bnd.ext
-setncrain -i May28_Event.nc --mdu dflowfm/FM_model.mdu --no-time
-setncrain -i May28_Event.nc --no-backup --as-given
-setncrain -i May28_Event.nc -q
 ```
 
 ### rnxml

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.13.0] - 2026-10-16
+
+### Added
+
+- `ncinfo`: new command that lists the variables in one or more NetCDF files (name,
+  type, shape, dimensions, units, long name). `-d`/`--dims` also lists the dimensions
+
+### Removed
+
+- `setncrain` command and the `ncftools.setncrain` module (including
+  `set_nc_rainfall()`)
+
+---
+
 ## [0.12.0] - 2026-10-09
 
 ### Added

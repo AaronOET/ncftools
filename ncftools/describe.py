@@ -18,6 +18,18 @@ TOOL_DESCRIPTIONS = {
             meshinfo FlowFM_net.nc       # Display mesh info for a given file
             meshinfo grid.nc             # Any FlowFM mesh NetCDF file
     """,
+    'ncinfo': """
+        List the variables in NetCDF files.
+
+        For every variable prints its name, data type, shape, dimensions,
+        units and long name. Several files can be given at once.
+        With -d/--dims the dimensions (name, size, unlimited) are listed too.
+
+        Examples:
+            ncinfo FlowFM_map.nc
+            ncinfo FlowFM_map.nc -d      # also list the dimensions
+            ncinfo a.nc b.nc c.nc
+    """,
     'nc2shp': """
         Convert a NetCDF mesh file to ESRI Shapefiles.
 
@@ -76,27 +88,6 @@ TOOL_DESCRIPTIONS = {
             transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp
             transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -o SHP_TRANS
             transzone2 SHP_NC/FlowFM_net_faces.shp -z SHP_TRANS/trans_zone_faces.shp -q
-    """,
-    'setncrain': """
-        Point a D-Flow FM model at a NetCDF rainfall forcing file.
-
-        Rewrites every [Meteo] block of the .ext file to use the given NetCDF
-        file as rainfall forcing:
-          quantity=rainfall, forcingFile=<*.nc>, forcingFileType=netcdf
-        If the .ext file is missing it is created from a built-in template and
-        registered in the .mdu as ExtForceFileNew.
-
-        The NetCDF time axis is read and the model times in the .mdu are set
-        to match it (in the model's Tunit):
-          RefDate  midnight of the first time stamp
-          TStart   offset of the first time stamp from RefDate
-          TStop    offset of the last  time stamp from RefDate
-
-        Examples:
-            setncrain -i May28_Event.nc
-            setncrain -i data/May28_Event.nc --ext dflowfm/FM_model_bnd.ext
-            setncrain -i May28_Event.nc --no-time
-            setncrain -i May28_Event.nc --no-backup --as-given
     """,
     'rnxml': """
         Rename dimr.xml to dimr_config.xml.
