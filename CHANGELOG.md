@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.13.1] - 2026-11-09
+
+### Fixed
+
+- `ncinfo`: opens files whose path has non-ASCII characters on Windows (e.g.
+  `B01-TPE_TM-事件模擬歷程.nc`), which the netCDF C library cannot open directly.
+  The file is opened through its 8.3 short path, or memory-mapped when short
+  names are disabled on the drive
+
+---
+
 ## [0.13.0] - 2026-10-16
 
 ### Added

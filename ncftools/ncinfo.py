@@ -8,11 +8,52 @@ listed as well.
 """
 
 import argparse
+import contextlib
 import importlib.metadata
+import mmap
 import os
 import sys
 
 import netCDF4 as nc
+
+
+def _short_path(file_path):
+    """Windows 8.3 short path of an existing file, or None if unavailable."""
+    import ctypes
+    buf = ctypes.create_unicode_buffer(32768)
+    n = ctypes.windll.kernel32.GetShortPathNameW(
+        os.path.abspath(file_path), buf, len(buf))
+    return buf.value if 0 < n < len(buf) else None
+
+
+@contextlib.contextmanager
+def open_dataset(file_path):
+    """
+    Open a NetCDF file for reading, also when its path has non-ASCII
+    characters (e.g. Chinese file names) on Windows.
+
+    The netCDF C library on Windows cannot open such paths directly, so the
+    file is opened through its 8.3 short path, or, when short names are
+    disabled on the drive, memory-mapped (no copy is made in RAM).
+    """
+    if os.name != 'nt' or file_path.isascii():
+        with nc.Dataset(file_path, 'r') as ds:
+            yield ds
+        return
+
+    short = _short_path(file_path)
+    if short and short.isascii():
+        with nc.Dataset(short, 'r') as ds:
+            yield ds
+        return
+
+    with open(file_path, 'rb') as f, \
+            mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
+        ds = nc.Dataset(os.path.basename(file_path), 'r', memory=mm)
+        try:
+            yield ds
+        finally:
+            ds.close()
 
 
 def read_info(file_path):
@@ -24,7 +65,7 @@ def read_info(file_path):
         keys name, dims, shape, dtype, units, long_name, and dimensions is a
         list of dicts with keys name, size, unlimited.
     """
-    with nc.Dataset(file_path, 'r') as ds:
+    with open_dataset(file_path) as ds:
         dimensions = [
             {'name': name, 'size': len(dim), 'unlimited': dim.isunlimited()}
             for name, dim in ds.dimensions.items()
